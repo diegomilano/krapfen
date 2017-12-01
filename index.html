@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+	
+	<!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="./css/bootstrap.min.css">
+
+    <title>Mockup</title>
+	
+    <script src="js/d3.min.js"></script>
+    <link rel="stylesheet" type="text/css" href="main.css">
+</head>
+<body>
+	<div class="container-fluid text-center">    
+		<div class="row content">
+			<div class="col-sm-9 text-left">
+				<svg width="1000" height="1000"></svg>
+			</div>
+			<div class="col-sm-3 sidenav">
+				<ul class="nav nav-tabs" id="myTab" role="tablist">
+					<li class="nav-item">
+						<a class="nav-link active" id="selection-tab" data-toggle="tab" href="#selecttab" role="tab">Selection</a>
+					</li>
+					<li class="nav-item">
+						<a class="nav-link" id="types-tab" data-toggle="tab" href="#typestab" role="tab">Types</a>
+					</li>
+					<li class="nav-item">
+						<a class="nav-link" id="source-tab" data-toggle="tab" href="#sourcetab" role="tab">Source</a>
+					</li>
+				</ul>
+				<div class="tab-content" id="myTabContent">
+					<div class="tab-pane fade show active" id="selecttab" role="tabpanel">
+						<div class="input-group mb-3">
+							<input type="text" class="form-control" placeholder="Label" id="label">
+						</div>
+						<div class="input-group mb-3">
+						  <div class="input-group-prepend">
+							<label class="input-group-text" for="typeselect">Type</label>
+						  </div>
+						  <select class="custom-select" id="typeselect"></select>
+						</div>
+						<h5 class="text-left">Attributes:   
+							<button type="button" class="btn btn-secondary" id="addattr">New</button>
+						</h5>
+						<ul class="list-group" id="attrs"></ul>
+					</div>
+					<div class="tab-pane fade" id="typestab" role="tabpanel">
+						<button type="button" class="btn btn-secondary" id="addtype">New</button>
+						<table class="table table-sm">
+							<thead>
+								<tr>
+									<th scope="col">Name</th>
+									<th scope="col">Color</th>
+									<th scope="col">Visible</th>
+								</tr>
+							</thead>
+						</table>
+						<ul class="list-group" id="types"></ul>
+					</div>
+					<div class="tab-pane fade" id="sourcetab" role="tabpanel">
+						<textarea id="graph_code" class="form-control"></textarea>
+						<div id="message"></div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</body>
+<script src="js/jquery-3.3.1.slim.min.js"></script>
+<script src="js/popper.min.js"></script>
+<script src="js/bootstrap.min.js"></script>
+<script type="text/javascript" src="main.js"></script>
+</html>
