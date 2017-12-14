@@ -11,7 +11,7 @@ requirejs.config({
 
 requirejs(['jquery-3.3.1.slim.min', 'bootstrap.bundle.min','d3.min'],
 
-function($, popper, bootstrap, d3) {
+function($, bootstrap, d3) {
 
 	var idCount=0;
 	var defaultType={name: "Default", color:"black", visible:true};
