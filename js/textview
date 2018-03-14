@@ -1,0 +1,19 @@
+define(["model"], function(model){	
+
+	return {
+		init: init,
+		update:update
+	}
+
+	function init(){
+
+	};
+
+	function update_text_view(){
+		var ta=d3.select("#graph_code");
+		ta.node().value=JSON.stringify(graph);
+	}
+	
+	var textarea=d3.select("#graph_code").node();
+
+});
