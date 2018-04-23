@@ -23,6 +23,7 @@ line.visiblelink {
 line.visiblelink.selected {
   stroke: red;
   stroke-width: 4px;
+  outline:solid red 0.5px;
 }
 
 circle {
@@ -32,6 +33,7 @@ circle {
 
 circle.selected {
   fill: red;
+  outline:solid red 0.5px;
 }
 
 
