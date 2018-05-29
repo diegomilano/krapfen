@@ -1,0 +1,31 @@
+{
+  "types": [
+    {"name": "Default", "color":"black", "visible":"true"},
+    {"name": "Extends", "color":"red", "visible":"true"},
+    {"name": "References", "color":"blue", "visible":"true"}
+  ],
+  "nodes":[
+    {
+      "id":"id1",
+      "label":"id1",
+      "type": "Default",
+      "x":"648",
+      "y":"132"
+    },
+    {
+      "id":"id2",
+      "label":"id2",
+      "type": "Default",
+      "x":"237",
+      "y":"222",
+      "attributes":["one","two","three"]
+    }
+  ],
+  "links":[
+    {
+      "source":"id1",
+      "target":"id2",
+      "type":"Extends"
+    }
+  ]
+}
