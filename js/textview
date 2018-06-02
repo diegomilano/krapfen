@@ -1,19 +1,16 @@
-define(["model"], function(model){	
+define(["d3", "model"], function(d3, model){	
 
-	return {
-		init: init,
-		update:update
-	}
+	var textarea;
+	var _public={};
 
-	function init(){
-
+	_public.init=function(){
+		textarea=d3.select("#graph_code");
+		_public.update();
 	};
 
-	function update_text_view(){
-		var ta=d3.select("#graph_code");
-		ta.node().value=JSON.stringify(graph);
+	_public.update=function(){
+		textarea.property("value", JSON.stringify(model.graph));
 	}
-	
-	var textarea=d3.select("#graph_code").node();
 
+	return _public;
 });

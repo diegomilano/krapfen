@@ -1,0 +1,35 @@
+requirejs.config({
+paths : {
+    //create alias to plugins (not needed if plugins are on the baseUrl)
+    'jquery':'jquery-3.3.1.slim.min?noext',
+    'bootstrap':'bootstrap.bundle.min?noext',
+    'd3':'d3.min?noext',
+    'propview':'viewer_propertiesview?noext',
+    'graphview':'graphview?noext',
+    'model':'model?noext'
+},
+shim: {
+    'bootstrap':['jquery']
+}
+});
+
+
+requirejs([
+'jquery',
+'bootstrap',
+'d3',
+'propview',
+'graphview',
+'model'],
+
+function($, bootstrap, d3, propview, graphview, model) {
+  model.views=model.views.concat([propview, graphview]);
+
+	d3.text("data.txt").then(function(data) {
+		model.import(JSON.parse(data));
+    console.log(model.graph);
+    model.views.forEach(x => x.init());
+  	model.changed();
+	});
+	//end of module
+});

@@ -1,4 +1,4 @@
-define(["d3.min", "model"], function(d3, model){
+define(["d3", "model"], function(d3, model){
 
 	var colors=["black", "red", "blue"];
 
