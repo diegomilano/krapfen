@@ -1,6 +1,8 @@
 define(["d3", "model"], function(d3, model){	
 
 
+	var circle_radius=13;
+
 	var svg,
 	dragLine,
 	drag_linking=false,
@@ -15,6 +17,17 @@ define(["d3", "model"], function(d3, model){
 			select(newNode);
 		});
 
+
+		svg.append('svg:defs').append('svg:marker')
+    .attr('id', 'end-arrow')
+    .attr('viewBox', '0 -5 10 10')
+    .attr('refX', 6)
+    .attr('markerWidth', 3)
+    .attr('markerHeight', 3)
+    .attr('orient', 'auto')
+  .append('svg:path')
+    .attr('d', 'M0,-5L10,0L0,5')
+    .attr('fill', '#000');
 
 		var width = +svg.attr("width"),
 			height = +svg.attr("height")
@@ -45,29 +58,35 @@ define(["d3", "model"], function(d3, model){
 				select(d);
 		});
 
-		link_enter.insert("line").classed("visiblelink", true);
+		link_enter.insert("line").classed("visiblelink", true).style('marker-end', 'url(#end-arrow)');
 		link_enter.insert("line",":first-child").classed("clicksurface", true);
+
+		
+
+
 
 		link_enter
 		.insert("text");
 
 		var link_merged = link_update.merge(link_enter);
 
+		
+
 		link_merged
 		.selectAll(".visiblelink")
-		.attr("x1", function(d) { return d.source.x; })
-		.attr("y1", function(d) { return d.source.y; })
-		.attr("x2", function(d) { return d.target.x; })
-		.attr("y2", function(d) { return d.target.y; })
+		.attr("x1", function(d) { return getStart(d.source.x, d.source.y, d.target.x, d.target.y)[0] })
+		.attr("y1", function(d) { return getStart(d.source.x, d.source.y, d.target.x, d.target.y)[1]; })
+		.attr("x2", function(d) { return getStart(d.target.x, d.target.y, d.source.x, d.source.y)[0]; })
+		.attr("y2", function(d) { return getStart(d.target.x, d.target.y, d.source.x, d.source.y)[1]; })
 		.style("stroke", function(d){ return d.type.color})
 		.style("visibility", function(d){ return d.type.visible?"visible":"collapse"})
 
 		link_merged
 		.selectAll(".clicksurface")
-		.attr("x1", function(d) { return d.source.x; })
-		.attr("y1", function(d) { return d.source.y; })
-		.attr("x2", function(d) { return d.target.x; })
-		.attr("y2", function(d) { return d.target.y; })
+		.attr("x1", function(d) { return getStart(d.source.x, d.source.y, d.target.x, d.target.y)[0] })
+		.attr("y1", function(d) { return getStart(d.source.x, d.source.y, d.target.x, d.target.y)[1]; })
+		.attr("x2", function(d) { return getStart(d.target.x, d.target.y, d.source.x, d.source.y)[0]; })
+		.attr("y2", function(d) { return getStart(d.target.x, d.target.y, d.source.x, d.source.y)[1]; })
 		.style("visibility", function(d){ return d.type.visible?"hidden":"collapse"})
 
 
@@ -110,7 +129,7 @@ define(["d3", "model"], function(d3, model){
 		});
 
 		node_enter.append("circle")
-			.attr("r", 13)
+			.attr("r", circle_radius)
 
 		node_enter.append("text")
 		.attr('x', 20)
@@ -172,23 +191,23 @@ define(["d3", "model"], function(d3, model){
 			});
 
 		d3.selectAll(".visiblelink")
-		.attr("x1", function(d) { return d.source.x; })
-		.attr("y1", function(d) { return d.source.y; })
-		.attr("x2", function(d) { return d.target.x; })
-		.attr("y2", function(d) { return d.target.y; })
+		.attr("x1", function(d) { return getStart(d.source.x, d.source.y, d.target.x, d.target.y)[0] })
+		.attr("y1", function(d) { return getStart(d.source.x, d.source.y, d.target.x, d.target.y)[1]; })
+		.attr("x2", function(d) { return getStart(d.target.x, d.target.y, d.source.x, d.source.y)[0]; })
+		.attr("y2", function(d) { return getStart(d.target.x, d.target.y, d.source.x, d.source.y)[1]; })
 
 
 		d3.selectAll(".clicksurface")
-		.attr("x1", function(d) { return d.source.x; })
-		.attr("y1", function(d) { return d.source.y; })
-		.attr("x2", function(d) { return d.target.x; })
-		.attr("y2", function(d) { return d.target.y; });
+		.attr("x1", function(d) { return getStart(d.source.x, d.source.y, d.target.x, d.target.y)[0] })
+		.attr("y1", function(d) { return getStart(d.source.x, d.source.y, d.target.x, d.target.y)[1]; })
+		.attr("x2", function(d) { return getStart(d.target.x, d.target.y, d.source.x, d.source.y)[0]; })
+		.attr("y2", function(d) { return getStart(d.target.x, d.target.y, d.source.x, d.source.y)[1]; })
 		}
 
 		d3.selectAll(".link")
 		.selectAll("text")
-			.attr('x', function(d){return (d.source.x+d.target.x)/2})
-			.attr('y', function(d){return (d.source.y+d.target.y)/2})
+			.attr('x', function(d){return (d.source.x+d.target.x)/2+10})
+			.attr('y', function(d){return (d.source.y+d.target.y)/2+10})
 	}
 
 
@@ -203,6 +222,12 @@ define(["d3", "model"], function(d3, model){
 		}
 	}
 
+	function getStart(x1, y1, x2, y2){		
+			phi = Math.atan2(y2-y1, x2-x1)
+			x = x1 + circle_radius * Math.cos(phi);
+			y = y1 + circle_radius * Math.sin(phi);
+			return [x,y];
+		}
 	return _public;
 
 });
