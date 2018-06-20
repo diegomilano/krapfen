@@ -15,21 +15,40 @@
     <link rel="stylesheet" type="text/css" href="css/main.css">
 </head>
 <body>
+
 	<div class="container-fluid text-center">
 		<div class="row content">
 			<div class="col-sm-9 text-left">
 				<svg width="1000" height="1000"></svg>
 			</div>
 			<div class="col-sm-3 sidenav">
-				<ul class="nav nav-tabs" id="myTab" role="tablist">
+<nav class="navbar navbar-expand-lg navbar-light bg-dark">
+  <div class="collapse navbar-collapse d-flex justify-content-end" id="navbarSupportedContent">
+    <button id="upload" class="btn btn-dark p-1 mx-2 my-0" type="button">
+      <img alt="upload" width="28px" src="svg/browser-upload.svg"/>
+    </button>
+    <input id='filedialog' type='file' accept=".json" hidden/>
+    <button id="download" class="btn btn-dark p-1 mx-2 my-0" type="button">
+      <img alt="download" width="28px" src="svg/cloud-download.svg"/>
+    </button>
+  	<button  id="styles" class="btn btn-dark p-1 mx-2 my-0 nav-link active " data-toggle="tab" href="#selecttab" role="tab" type="button">
+      <img alt="styles" width="28px" src="svg/brush.svg"/>
+    </button>
+		<button  id="properties" class="btn btn-dark p-1 mx-2 my-0 nav-link" type="button" data-toggle="tab" href="#typestab" role="tab">
+      <img alt="properties" width="28px" src="svg/view-list.svg"/>
+    </button>
+		<button  id="lock" class="btn btn-dark p-1 mx-2 my-0" type="button">
+      <img alt="lock editor" width="28px" src="svg/lock-open.svg"/>
+    </button>
+  </div>
+</nav>
+
+				<ul class="nav nav-tabs" id="tabs" role="tablist">
 					<li class="nav-item">
 						<a class="nav-link active" id="selection-tab" data-toggle="tab" href="#selecttab" role="tab">Selection</a>
 					</li>
 					<li class="nav-item">
 						<a class="nav-link" id="types-tab" data-toggle="tab" href="#typestab" role="tab">Types</a>
-					</li>
-					<li class="nav-item">
-						<a class="nav-link" id="source-tab" data-toggle="tab" href="#sourcetab" role="tab">Source</a>
 					</li>
 				</ul>
 				<div class="tab-content" id="myTabContent">

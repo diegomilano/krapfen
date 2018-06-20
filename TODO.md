@@ -12,10 +12,10 @@ Feature
 
 Issue
 * source should not be editable(?) but export and import.
-* At import, nodes without coordinates require some kind of dynamc placement, e.g. using force layout. Add a layout button.
+* At import, nodes without coordinates require some kind of dynamic placement, e.g. using force layout. Add a layout button.
 * When editing attributes, editing blocks because the fields are re-layout. Focus should be managed appropriately 
 * Handle removal of types
-* Edge Labels "jump"
+* Edge Labels "jump" [done]
 * Self-relationships are not shown (loops)
 
 

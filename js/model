@@ -1,4 +1,4 @@
-define(function(){
+define(["jquery"], function($){
 		//private scope
 		var idCount=0;
 
@@ -6,19 +6,19 @@ define(function(){
 		var _public={};
 
 		_public.defaultType={name: "Default", color:"black", visible:true};
-		defaultTypeList=[
-			_public.defaultType,
-			{name: "Other", color:"red", visible:false}
-		].sort((a,b)=>(a.name > b.name))
+		
 
 	 	_public.graph={
+			name:"Default",
 			nodes:[],
 			links:[],
-			types: defaultTypeList
+			types: [_public.defaultType]
 		}
 
 		_public.selected=null;
-
+		_public.edit_locked=false;
+		
+		/*		
 		_public.import=function(graph){
 			_public.graph=graph;
 
@@ -40,6 +40,7 @@ define(function(){
 				l.attributes=l.attributes?l.attributes:[];
 			});
 		}
+		*/
 
 	 	_public.createNode=function(x,y) {
 		    var newnode = {
@@ -65,6 +66,48 @@ define(function(){
 				_public.graph.links.push(newlink);
 				return newlink;
 		};
+
+		_public.import=function(data){
+			var graph=JSON.parse(data);
+				graph.nodes.forEach(n => {
+					n.type=graph.types.filter(t => t.name==n.type)[0];
+					
+				});
+				graph.links.forEach(l => {
+					l.source=graph.nodes.filter(n => n.id==l.source)[0];
+					l.target=graph.nodes.filter(n => n.id==l.target)[0];
+					l.type=graph.types.filter(t => t.name==l.type)[0];
+				});
+			_public.graph=graph;
+			_public.changed();
+		}
+
+		_public.export=function(){
+			var tmp_nodes=_public.graph.nodes;
+			var tmp_links=_public.graph.links;
+			
+			_public.graph.nodes=_public.graph.nodes.map(
+			n => {
+					var new_n=$.extend(true, {},n);
+					new_n.type=n.type.name;
+					return new_n;
+			});
+			
+			_public.graph.links=_public.graph.links.map(
+			l => {
+					var new_l=$.extend(true, {},l);
+					new_l.source=l.source.id;
+					new_l.target=l.target.id;
+					new_l.type=l.type.name;
+					return new_l;
+			});
+
+			var marshalled=JSON.stringify(_public.graph);
+			_public.graph.links=tmp_links;
+			_public.graph.nodes=tmp_nodes;
+			return marshalled;
+		}
+
 
 		_public.views=[];
 

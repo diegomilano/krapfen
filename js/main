@@ -7,6 +7,7 @@ requirejs.config({
         'propview':'propertiesview?noext',
         'graphview':'graphview?noext',
         'textview':'textview?noext',
+        'navbar':'navbar?noext',
         'model':'model?noext'
     },
     shim: {
@@ -22,15 +23,11 @@ requirejs([
 'propview',
 'graphview',
 'textview',
+'navbar',
 'model'],
-function($, bootstrap, d3, propview, graphview, textview, model) {
+function($, bootstrap, d3, propview, graphview, textview, navbar, model) {
 
-	d3.text("data.txt", function(error, data) {
-		if (error) throw error;
-		//graph=JSON.parse(data);
-	});
-
-	model.views=model.views.concat([propview, graphview, textview]);
+	model.views=model.views.concat([propview, graphview, textview, navbar]);
 	model.views.forEach(x => x.init());
 	model.changed();
 

@@ -1,0 +1,52 @@
+define(["d3", "model"], function(d3, model){
+
+  var _public={};
+
+	_public.init=function(){
+    d3.select("#filedialog").on("change", function(){
+      var file = d3.event.target.files[0];
+      var reader = new FileReader();
+      reader.onload = function(evt) {
+        model.import(evt.target.result);
+      };
+      reader.readAsText(file);
+    });
+    d3.select("#upload").on("click", function(){
+      d3.select("#filedialog").node().click();
+    });
+    d3.select("#download").on("click", function(){
+      var a=d3.select("body")
+      .append("a")
+      .attr("href", 'data:text/plain;charset=utf-8,' + encodeURIComponent(model.export()))
+      .attr("download", model.graph.name+".json")
+      .style("display","none");
+      //did not manage to use "dispatch"
+      a.node().click();
+      a.remove();
+    });
+    d3.select("#lock").on("click", function(){
+      if(model.edit_locked){
+        d3.select(this).select('img').attr('src',"svg/lock-open.svg")
+        model.edit_locked=false;
+      }
+      else{
+        d3.select(this).select('img').attr('src',"svg/lock.svg")
+        model.edit_locked=true;
+      }
+    });
+
+    d3.select("#styles").on("click", function(){
+      d3.select('#types-tab').node().tab('show');
+    });
+
+    d3.select("#properties").on("click", function(){
+      d3.select('#selection-tab').node().tab('show');
+    });
+	};
+
+  _public.update=function(){
+  };
+
+	return _public;
+
+});
