@@ -126,6 +126,16 @@ define(["d3", "model"], function(d3, model){
 		});
 
 		//type selection dropdown
+		d3.select("#hide").on("click",
+		function(){
+			if(model.selected){
+				model.selected.hidden=!model.selected.hidden;
+				model.changed();
+			}
+		});
+
+
+		//type selection dropdown
 		d3.select("#typeselect").on("input",
 		function(){
 			if(model.selected){
@@ -152,6 +162,8 @@ define(["d3", "model"], function(d3, model){
 function update_selected_view(){
 		if(!model.selected)return;
 		d3.select("#label").node().value=model.selected.label;
+		
+		d3.select("#hide").classed("active",model.selected.hidden)
 
 		//types dropdown - list of options
 		var typeselect=d3.select("#typeselect")

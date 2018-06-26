@@ -31,19 +31,19 @@
     <button id="download" class="btn btn-dark p-1 mx-2 my-0" type="button">
       <img alt="download" width="28px" src="svg/cloud-download.svg"/>
     </button>
-  	<button  id="styles" class="btn btn-dark p-1 mx-2 my-0 nav-link active " data-toggle="tab" href="#selecttab" role="tab" type="button">
-      <img alt="styles" width="28px" src="svg/brush.svg"/>
-    </button>
-		<button  id="properties" class="btn btn-dark p-1 mx-2 my-0 nav-link" type="button" data-toggle="tab" href="#typestab" role="tab">
+		<button  id="properties" class="btn btn-dark p-1 mx-2 my-0 nav-link active" type="button" data-toggle="tab" href="#typestab" role="tab">
       <img alt="properties" width="28px" src="svg/view-list.svg"/>
-    </button>
+    </button>  	
+<button  id="styles" class="btn btn-dark p-1 mx-2 my-0 nav-link" data-toggle="tab" href="#selecttab" role="tab" type="button">
+      <img alt="styles" width="28px" src="svg/brush.svg"/>
+    </button>		
 		<button  id="lock" class="btn btn-dark p-1 mx-2 my-0" type="button">
       <img alt="lock editor" width="28px" src="svg/lock-open.svg"/>
     </button>
   </div>
 </nav>
 
-				<ul class="nav nav-tabs" id="tabs" role="tablist">
+				<ul class="nav nav-tabs" style="display:none" id="tabs" role="tablist">
 					<li class="nav-item">
 						<a class="nav-link active" id="selection-tab" data-toggle="tab" href="#selecttab" role="tab">Selection</a>
 					</li>
@@ -51,10 +51,14 @@
 						<a class="nav-link" id="types-tab" data-toggle="tab" href="#typestab" role="tab">Types</a>
 					</li>
 				</ul>
+
 				<div class="tab-content" id="myTabContent">
 					<div class="tab-pane fade show active" id="selecttab" role="tabpanel">
 						<div class="input-group mb-3">
 							<input type="text" class="form-control" placeholder="Label" id="label">
+							<button id="hide" class="btn btn-dark p-1 mx-2 my-0" type="button">
+								<img alt="hide" width="20px" src="svg/preview.svg"/>
+							</button>
 						</div>
 						<div class="input-group mb-3">
 						  <div class="input-group-prepend">
@@ -79,10 +83,6 @@
 							</thead>
 						</table>
 						<ul class="list-group" id="types"></ul>
-					</div>
-					<div class="tab-pane fade" id="sourcetab" role="tabpanel">
-						<textarea id="graph_code" class="form-control"></textarea>
-						<div id="message"></div>
 					</div>
 				</div>
 			</div>

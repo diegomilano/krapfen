@@ -63,9 +63,6 @@ define(["d3", "model"], function(d3, model){
 		link_enter.insert("line",":first-child").classed("clicksurface", true);
 
 
-
-
-
 		link_enter
 		.insert("text");
 
@@ -104,6 +101,8 @@ define(["d3", "model"], function(d3, model){
 			})
 		.style("visibility", function(d){ return d.type.visible?"visible":"collapse"});
 
+
+		link_merged.style("opacity",function(d){return (d.hidden||d.source.hidden||d.target.hidden)?0.05:1});
 
 		var node_update = svg.selectAll(".node").data(model.graph.nodes, function(d){return d.id;});
 
@@ -152,6 +151,8 @@ define(["d3", "model"], function(d3, model){
 			.selectAll("circle")
 			.style("fill", function(d){ return d.type.color})
 			.style("visibility", function(d){ return d.type.visible?"visible":"collapse"});
+
+		node_merged.style("opacity",function(d){return d.hidden?0.05:1});
 
 	}
 

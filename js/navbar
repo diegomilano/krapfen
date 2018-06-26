@@ -1,4 +1,4 @@
-define(["d3", "model"], function(d3, model){
+define(["jquery", "d3", "model"], function($,d3, model){
 
   var _public={};
 
@@ -36,11 +36,17 @@ define(["d3", "model"], function(d3, model){
     });
 
     d3.select("#styles").on("click", function(){
-      d3.select('#types-tab').node().tab('show');
+			d3.event.preventDefault();
+			d3.select("#properties").classed("active",false);
+			d3.select("#styles").classed("active",true);
+      $('#types-tab').tab('show');
     });
 
     d3.select("#properties").on("click", function(){
-      d3.select('#selection-tab').node().tab('show');
+			d3.event.preventDefault();
+			d3.select("#properties").classed("active",true);
+			d3.select("#styles").classed("active",false);     	
+			$('#selection-tab').tab('show');
     });
 	};
 
