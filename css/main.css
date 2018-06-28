@@ -8,20 +8,20 @@ line.dragline.hidden {
 }
 
 
-line.clicksurface {
+.clicksurface {
   visibility:hidden;
   stroke-width: 10px;
   pointer-events: all;
 }
 
-line.visiblelink {
-  stroke: gray;
+.visiblelink {
   stroke-width: 3px;
   pointer-events: none;
+	fill-opacity:0;
+	stroke-opacity:1;
 }
 
-line.visiblelink.selected {
-  stroke: red;
+.visiblelink.selected {
   stroke-width: 4px;
   outline:solid red 0.5px;
 }

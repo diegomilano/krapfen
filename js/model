@@ -109,6 +109,19 @@ define(["jquery"], function($){
 		}
 
 
+
+		_public.linksBetween=function(source, target){
+			return _public.graph.links.filter(l => {return ((l.source.id==source.id && l.target.id == target.id)||
+				(l.target.id==source.id && l.source.id == target.id))
+			});
+		}
+
+		_public.linksOf=function(node){
+			return _public.graph.links.filter(l => {
+				return (l.source.id==node.id || l.target.id == node.id)
+			});
+		}
+
 		_public.views=[];
 
 		_public.changed=function(){

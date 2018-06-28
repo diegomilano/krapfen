@@ -41,8 +41,6 @@ define(["d3", "model"], function(d3, model){
 		.attr("y2", 100)
 	}
 
-
-
 	_public.update=function(){
 		var link_update = svg.selectAll(".link").data(model.graph.links, function(d){return d.id;});
 		var link_exit = link_update.exit();
@@ -59,32 +57,27 @@ define(["d3", "model"], function(d3, model){
 				select(d);
 		});
 
-		link_enter.insert("line").classed("visiblelink", true).style('marker-end', 'url(#end-arrow)');
-		link_enter.insert("line",":first-child").classed("clicksurface", true);
 
 
-		link_enter
-		.insert("text");
+
+		
+
+		link_enter.insert("path").classed("visiblelink", true).style('marker-end', 'url(#end-arrow)');
+		link_enter.insert("path", ":first-child").classed("clicksurface", true)
+		link_enter.insert("text");
 
 		var link_merged = link_update.merge(link_enter);
 
-
+		link_merged.selectAll("path")
+		.attr("d",getLinkLine);
 
 		link_merged
 		.selectAll(".visiblelink")
-		.attr("x1", function(d) { return getStart(d.source.x, d.source.y, d.target.x, d.target.y)[0] })
-		.attr("y1", function(d) { return getStart(d.source.x, d.source.y, d.target.x, d.target.y)[1]; })
-		.attr("x2", function(d) { return getStart(d.target.x, d.target.y, d.source.x, d.source.y)[0]; })
-		.attr("y2", function(d) { return getStart(d.target.x, d.target.y, d.source.x, d.source.y)[1]; })
-		.style("stroke", function(d){ return d.type.color})
+		.style("stroke", function(d){return d.type.color})
 		.style("visibility", function(d){ return d.type.visible?"visible":"collapse"})
 
 		link_merged
 		.selectAll(".clicksurface")
-		.attr("x1", function(d) { return getStart(d.source.x, d.source.y, d.target.x, d.target.y)[0] })
-		.attr("y1", function(d) { return getStart(d.source.x, d.source.y, d.target.x, d.target.y)[1]; })
-		.attr("x2", function(d) { return getStart(d.target.x, d.target.y, d.source.x, d.source.y)[0]; })
-		.attr("y2", function(d) { return getStart(d.target.x, d.target.y, d.source.x, d.source.y)[1]; })
 		.style("visibility", function(d){ return d.type.visible?"hidden":"collapse"})
 
 
@@ -94,15 +87,16 @@ define(["d3", "model"], function(d3, model){
 
 		link_merged
 		.selectAll("text")
-			.attr('x', function(d){return (d.source.x+d.target.x)/2+10})
-			.attr('y', function(d){return (d.source.y+d.target.y)/2+10})
+			.attr('x', function(d){return d.points[1][0]+10})
+			.attr('y', function(d){return d.points[1][1]+10})
 			.text(function(d) {
 				return d.label;
 			})
 		.style("visibility", function(d){ return d.type.visible?"visible":"collapse"});
 
 
-		link_merged.style("opacity",function(d){return (d.hidden||d.source.hidden||d.target.hidden)?0.05:1});
+		link_merged
+		.style("opacity",function(d){return (d.hidden||d.source.hidden||d.target.hidden)?0.05:1});
 
 		var node_update = svg.selectAll(".node").data(model.graph.nodes, function(d){return d.id;});
 
@@ -195,27 +189,18 @@ define(["d3", "model"], function(d3, model){
 				return "translate(" + d.x + "," + d.y + ")";
 			});
 
-		d3.selectAll(".visiblelink")
-		.attr("x1", function(d){ return getStart(d.source.x, d.source.y, d.target.x, d.target.y)[0] })
-		.attr("y1", function(d) { return getStart(d.source.x, d.source.y, d.target.x, d.target.y)[1]; })
-		.attr("x2", function(d) { return getStart(d.target.x, d.target.y, d.source.x, d.source.y)[0]; })
-		.attr("y2", function(d) { return getStart(d.target.x, d.target.y, d.source.x, d.source.y)[1]; })
-
-
-		d3.selectAll(".clicksurface")
-		.attr("x1", function(d) { return getStart(d.source.x, d.source.y, d.target.x, d.target.y)[0] })
-		.attr("y1", function(d) { return getStart(d.source.x, d.source.y, d.target.x, d.target.y)[1]; })
-		.attr("x2", function(d) { return getStart(d.target.x, d.target.y, d.source.x, d.source.y)[0]; })
-		.attr("y2", function(d) { return getStart(d.target.x, d.target.y, d.source.x, d.source.y)[1]; })
+		
+		d3.selectAll(".link").filter(function(d1){return (d1.source === d || d1.target === d)}).selectAll("path").attr("d",getLinkLine);
 
 		d3.selectAll(".link")
 		.selectAll("text")
-			.attr('x', function(d){return (d.source.x+d.target.x)/2+10})
-			.attr('y', function(d){return (d.source.y+d.target.y)/2+10})
-		}
-
-
+		.attr('x', function(d){return d.points[1][0]+10})
+		.attr('y', function(d){return d.points[1][1]+10})
+		.text(function(d) {
+				return d.label;
+			});
 	}
+}
 
 
 	function dragended(d) {
@@ -236,6 +221,50 @@ define(["d3", "model"], function(d3, model){
 			y = y1 + circle_radius * Math.sin(phi);
 			return [x,y];
 		}
+
+const step=0.005;
+		var line =d3.line().curve(d3.curveCardinal);
+	function getLinkLine(d){
+			var allLinks=model.linksBetween(d.source, d.target).map(l => l.id);
+
+			//makes  0, 1, -1, 2, -2, 3, -3...
+			var progression=d3.range(1,allLinks.length).reduce((p,c) => {
+				p.push(c);
+				p.push(-c);	
+				return p;  
+			}, [0])
+
+			//now array length is odd
+			if(allLinks.length%2==0)allLinks.unshift(-1);
+			var t=progression[allLinks.indexOf(d.id)]*step;
+			var middlepoint=parametricBisector(d.source.x, d.source.y, d.target.x, d.target.y)(t);
+			
+			d.points=	[
+				getStart(d.source.x, d.source.y, d.target.x, d.target.y),
+				middlepoint,
+				getStart(d.target.x, d.target.y, d.source.x, d.source.y)
+			]
+			
+			return line(d.points);
+		}
+
+function parametricBisector(startX,startY,endX,endY){
+	// Calculate slopes and Y intersects
+	var perpendicularSlope =  - (endX - startX)/(endY - startY);
+	var centrePointX = (startX + endX)/2;
+	var centrePointY = (startY + endY)/2;
+
+	var yIntersect = centrePointY - (centrePointX * perpendicularSlope);
+
+
+	return function(t){
+		var x =centrePointX + (0 - centrePointX) * t;
+		var y =centrePointY + (yIntersect-centrePointY) * t;
+		return [x,y];
+	}
+}
+
+
 	return _public;
 
 });
