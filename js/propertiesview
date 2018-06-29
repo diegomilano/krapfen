@@ -73,8 +73,11 @@ define(["d3", "model"], function(d3, model){
 
 		input_append_enter
 		.append("button")
-		.classed("btn btn-outline-secondary",true)
-		.text("-")
+		.classed("btn", true)
+		.append("img")
+				.attr("alt", "remove")
+				.attr("width","15px")
+				.attr("src", "svg/trash.svg")
 
 		types_merge=types_enter
 		.merge(types)
@@ -218,8 +221,11 @@ function update_selected_view(){
 				.append("div")
 					.classed("input-group-append", true)
 				.append("button")
-					.classed("btn btn-outline-secondary", true)
-					.text("remove")
+					.classed("btn", true)
+				.append("img")
+				.attr("alt", "remove")
+				.attr("width","15px")
+				.attr("src", "svg/trash.svg")
 
 			//note the on must be added to the entire update or the indexes will be cached in the closure
 			update=enter.merge(attrs);

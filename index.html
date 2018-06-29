@@ -22,24 +22,24 @@
 				<svg width="1000" height="1000"></svg>
 			</div>
 			<div class="col-sm-3 sidenav">
-<nav class="navbar navbar-expand-lg navbar-light bg-dark">
-  <div class="collapse navbar-collapse d-flex justify-content-end" id="navbarSupportedContent">
-    <button id="upload" class="btn btn-dark p-1 mx-2 my-0" type="button">
-      <img alt="upload" width="28px" src="svg/browser-upload.svg"/>
+<nav class="navbar navbar-expand-lg navbar-light">
+  <div class="collapse navbar-collapse d-flex justify-content-end" id="navbarSupportedContent">    
+		<button  id="properties" class="btn  p-1 ml-1 mr-0 my-0 nav-link active" type="button" data-toggle="tab" href="#typestab" role="tab">
+      <img alt="properties" width="20px" src="svg/view-list.svg"/>
+    </button>  	
+		<button  id="styles" class="btn  p-1 ml-1 mr-2 my-0 nav-link" data-toggle="tab" href="#selecttab" role="tab" type="button">
+      <img alt="styles" width="20px" src="svg/brush.svg"/>
+    </button>
+		<button  id="lock" class="btn p-1 ml-1 mr-0 my-0" type="button">
+      <img alt="lock editor" width="20px" src="svg/lock-open.svg"/>
+    </button>
+		<button id="upload" class="btn p-1 ml-1 mr-0 my-0" type="button">
+      <img alt="upload" width="20px" src="svg/browser-upload.svg"/>
     </button>
     <input id='filedialog' type='file' accept=".json" hidden/>
-    <button id="download" class="btn btn-dark p-1 mx-2 my-0" type="button">
-      <img alt="download" width="28px" src="svg/cloud-download.svg"/>
-    </button>
-		<button  id="properties" class="btn btn-dark p-1 mx-2 my-0 nav-link active" type="button" data-toggle="tab" href="#typestab" role="tab">
-      <img alt="properties" width="28px" src="svg/view-list.svg"/>
-    </button>  	
-<button  id="styles" class="btn btn-dark p-1 mx-2 my-0 nav-link" data-toggle="tab" href="#selecttab" role="tab" type="button">
-      <img alt="styles" width="28px" src="svg/brush.svg"/>
+    <button id="download" class="btn p-1 ml-1 mr-0 my-0" type="button">
+      <img alt="download" width="20px" src="svg/cloud-download.svg"/>
     </button>		
-		<button  id="lock" class="btn btn-dark p-1 mx-2 my-0" type="button">
-      <img alt="lock editor" width="28px" src="svg/lock-open.svg"/>
-    </button>
   </div>
 </nav>
 
@@ -56,7 +56,7 @@
 					<div class="tab-pane fade show active" id="selecttab" role="tabpanel">
 						<div class="input-group mb-3">
 							<input type="text" class="form-control" placeholder="Label" id="label">
-							<button id="hide" class="btn btn-dark p-1 mx-2 my-0" type="button">
+							<button id="hide" class="btn  p-1 mx-2 my-0" type="button">
 								<img alt="hide" width="20px" src="svg/preview.svg"/>
 							</button>
 						</div>
@@ -67,12 +67,16 @@
 						  <select class="custom-select" id="typeselect"></select>
 						</div>
 						<h5 class="text-left">Attributes:
-							<button type="button" class="btn btn-secondary" id="addattr">New</button>
+							<button type="button" class="btn p-1 ml-1 mr-0 my-0" id="addattr">
+      					<img alt="add attribute" width="20px" src="svg/plus.svg"/>
+							</button>
 						</h5>
 						<ul class="list-group" id="attrs"></ul>
 					</div>
 					<div class="tab-pane fade" id="typestab" role="tabpanel">
-						<button type="button" class="btn btn-secondary" id="addtype">New</button>
+						<button type="button" class="btn p-1 ml-1 mr-0 my-0" id="addtype">
+      					<img alt="add attribute" width="20px" src="svg/plus.svg"/>
+							</button>
 						<table class="table table-sm">
 							<thead>
 								<tr>
