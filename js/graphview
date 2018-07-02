@@ -58,17 +58,14 @@ define(["d3", "model"], function(d3, model){
 		});
 
 
-
-
-		
-
 		link_enter.insert("path").classed("visiblelink", true).style('marker-end', 'url(#end-arrow)');
 		link_enter.insert("path", ":first-child").classed("clicksurface", true)
 		link_enter.insert("text");
 
 		var link_merged = link_update.merge(link_enter);
 
-		link_merged.selectAll("path")
+		link_merged
+		.selectAll("path")
 		.attr("d",getLinkLine);
 
 		link_merged
@@ -80,10 +77,6 @@ define(["d3", "model"], function(d3, model){
 		.selectAll(".clicksurface")
 		.style("visibility", function(d){ return d.type.visible?"hidden":"collapse"})
 
-
-		//TODO: space text so that it does not overlap line
-		//TODO: multiple relationships among the same objects hide each other. The lines should be curve and
-		//with different middle point
 
 		link_merged
 		.selectAll("text")
@@ -190,9 +183,13 @@ define(["d3", "model"], function(d3, model){
 			});
 
 		
-		d3.selectAll(".link").filter(function(d1){return (d1.source === d || d1.target === d)}).selectAll("path").attr("d",getLinkLine);
+		var movingLinks=d3.selectAll(".link").filter(function(d1){return (d1.source === d || d1.target === d)});
 
-		d3.selectAll(".link")
+		movingLinks
+		.selectAll("path")
+		.attr("d",getLinkLine);
+
+		movingLinks
 		.selectAll("text")
 		.attr('x', function(d){return d.points[1][0]+10})
 		.attr('y', function(d){return d.points[1][1]+10})
@@ -222,7 +219,7 @@ define(["d3", "model"], function(d3, model){
 			return [x,y];
 		}
 
-const step=0.005;
+		const step=20;
 		var line =d3.line().curve(d3.curveCardinal);
 	function getLinkLine(d){
 			var allLinks=model.linksBetween(d.source, d.target).map(l => l.id);
@@ -238,7 +235,6 @@ const step=0.005;
 			if(allLinks.length%2==0)allLinks.unshift(-1);
 			var t=progression[allLinks.indexOf(d.id)]*step;
 			var middlepoint=parametricBisector(d.source.x, d.source.y, d.target.x, d.target.y)(t);
-			
 			d.points=	[
 				getStart(d.source.x, d.source.y, d.target.x, d.target.y),
 				middlepoint,
@@ -248,20 +244,31 @@ const step=0.005;
 			return line(d.points);
 		}
 
-function parametricBisector(startX,startY,endX,endY){
-	// Calculate slopes and Y intersects
-	var perpendicularSlope =  - (endX - startX)/(endY - startY);
+function parametricBisector(startX, startY, endX, endY){
+	//segment midpoint
 	var centrePointX = (startX + endX)/2;
 	var centrePointY = (startY + endY)/2;
-
+	//perpendicular slope. Slope is infinity for an horizontal line	
+	var perpendicularSlope =  - (endX - startX)/(endY - startY);
 	var yIntersect = centrePointY - (centrePointX * perpendicularSlope);
-
-
-	return function(t){
-		var x =centrePointX + (0 - centrePointX) * t;
-		var y =centrePointY + (yIntersect-centrePointY) * t;
+	//get a unit vector so that parameter has unitary steps
+	var norm=Math.sqrt(centrePointX*centrePointX+(yIntersect-centrePointY)*(yIntersect-centrePointY));
+	//returns the parametric bisector as a parametric equation
+	
+	var pb=function(t){
+		if(startY!=endY){			
+			var x =centrePointX + ((0 - centrePointX)/norm) * t;
+			var y =centrePointY + ((yIntersect-centrePointY)/norm) * t;
+		}
+		else{
+			console.log(t);
+			var x = centrePointX ;
+			var y = centrePointY + t;
+			console.log(x,y);	
+		}
 		return [x,y];
 	}
+	return pb;
 }
 
 

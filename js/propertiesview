@@ -160,8 +160,6 @@ define(["d3", "model"], function(d3, model){
 
 
 
-
-
 function update_selected_view(){
 		if(!model.selected)return;
 		d3.select("#label").node().value=model.selected.label;
@@ -188,7 +186,6 @@ function update_selected_view(){
 			.style("border-left-style", "solid")
 			.style("border-left-width", "4px")
 			.style("border-left-color", model.selected.type.color);
-
 
 			typeselect_merge
 			.property("selected", function(d){return model.selected.type===d});
