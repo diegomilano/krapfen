@@ -18,29 +18,6 @@ define(["jquery"], function($){
 		_public.selected=null;
 		_public.edit_locked=false;
 		
-		/*		
-		_public.import=function(graph){
-			_public.graph=graph;
-
-			_public.graph.types=_public.graph.types?_public.graph.types.sort((a,b)=>(a.name > b.name)):defaultTypeList;
-
-			_public.graph.nodes.forEach(function(n){
-				n.id=n.id?n.id:"id"+(idCount++);
-				n.x=n.x?n.x:0;
-				n.y=n.y?n.y:0;
-				n.type?n.type=_public.graph.types.filter(t => t.name==n.type)[0]:_public.defaultType;
-				n.attributes=n.attributes?n.attributes:[];
-			});
-
-			_public.graph.links.forEach(function(l){
-				l.id=l.id?l.id:"id"+(idCount++);
-				l.type?l.type=_public.graph.types.filter(t => t.name==l.type)[0]:_public.defaultType;
-				l.source=_public.graph.nodes.filter(n => n.id==l.source)[0];
-				l.target=_public.graph.nodes.filter(n => n.id==l.target)[0];
-				l.attributes=l.attributes?l.attributes:[];
-			});
-		}
-		*/
 
 	 	_public.createNode=function(x,y) {
 		    var newnode = {
@@ -56,22 +33,24 @@ define(["jquery"], function($){
 		};
 
 		_public.createLink=function(source, target){
-				var newlink={
+				var newLink={
 					id:"id"+idCount++,
 					source:source,
 					target:target,
 					"label":"New",
 					"type":_public.defaultType
 				};
-				_public.graph.links.push(newlink);
-				return newlink;
+				_public.graph.links.push(newLink);
+				newLink.linkSet=_public.linksBetween(newLink.source, newLink.target).map(l => newLink.id);
+				newLink.linkSetSize=newLink.linkSet.length;
+				newLink.linkIndex=newLink.linkSet.indexOf(newLink.id);
+				return newLink;
 		};
 
 		_public.import=function(data){
 			var graph=JSON.parse(data);
 				graph.nodes.forEach(n => {
-					n.type=graph.types.filter(t => t.name==n.type)[0];
-					
+					n.type=graph.types.filter(t => t.name==n.type)[0];	
 				});
 				graph.links.forEach(l => {
 					l.source=graph.nodes.filter(n => n.id==l.source)[0];
@@ -79,6 +58,11 @@ define(["jquery"], function($){
 					l.type=graph.types.filter(t => t.name==l.type)[0];
 				});
 			_public.graph=graph;
+			_public.graph.links.forEach( l => {
+				l.linkSet=_public.linksBetween(l.source, l.target).map(l => l.id);
+				l.linkSetSize=l.linkSet.length;
+				l.linkIndex=l.linkSet.indexOf(l.id);				
+			});
 			_public.changed();
 		}
 

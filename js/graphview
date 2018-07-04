@@ -80,8 +80,8 @@ define(["d3", "model"], function(d3, model){
 
 		link_merged
 		.selectAll("text")
-			.attr('x', function(d){return d.points[1][0]+10})
-			.attr('y', function(d){return d.points[1][1]+10})
+			.attr('x', function(d){return getTextPos(d)[0]})
+			.attr('y', function(d){return getTextPos(d)[1]})
 			.text(function(d) {
 				return d.label;
 			})
@@ -191,8 +191,8 @@ define(["d3", "model"], function(d3, model){
 
 		movingLinks
 		.selectAll("text")
-		.attr('x', function(d){return d.points[1][0]+10})
-		.attr('y', function(d){return d.points[1][1]+10})
+		.attr('x', function(d){return getTextPos(d)[0]})
+		.attr('y', function(d){return getTextPos(d)[1]})
 		.text(function(d) {
 				return d.label;
 			});
@@ -212,36 +212,71 @@ define(["d3", "model"], function(d3, model){
 		}
 	}
 
-	function getStart(x1, y1, x2, y2){
-			phi = Math.atan2(y2-y1, x2-x1)
-			x = x1 + circle_radius * Math.cos(phi);
-			y = y1 + circle_radius * Math.sin(phi);
-			return [x,y];
-		}
 
-		const step=20;
-		var line =d3.line().curve(d3.curveCardinal);
 	function getLinkLine(d){
-			var allLinks=model.linksBetween(d.source, d.target).map(l => l.id);
+		//these should be recomputed only when adding/removing links
+		d.linkSet=model.linksBetween(d.source, d.target).map(l => l.id);
+		d.linkSetSize=d.linkSet.length;
+		d.linkIndex=d.linkSet.indexOf(d.id);
+		d.newPosSignature=d.source.x+d.source.y+d.target.x+d.target.Y+d.linkIndex;
+		if(d.posSignature!=d.newPosSignature){
+			computeLayout(d);
+			d.posSignature=d.newPosSignature;
+		}
+		return d.line;
+	}
 
-			//makes  0, 1, -1, 2, -2, 3, -3...
-			var progression=d3.range(1,allLinks.length).reduce((p,c) => {
-				p.push(c);
-				p.push(-c);	
-				return p;  
-			}, [0])
+	function getTextPos(d){
+		//these should be recomputed only when adding/removing links
+		d.linkSet=model.linksBetween(d.source, d.target).map(l => l.id);
+		d.linkSetSize=d.linkSet.length;
+		d.linkIndex=d.linkSet.indexOf(d.id);
+		d.newPosSignature=d.source.x+d.source.y+d.target.x+d.target.y+d.linkIndex;
+		if(d.posSignature!=d.newPosSignature){
+			computeLayout(d);
+			d.posSignature=d.newPosSignature;
+		}
+		return d.textPos;
+	}
 
-			//now array length is odd
-			if(allLinks.length%2==0)allLinks.unshift(-1);
-			var t=progression[allLinks.indexOf(d.id)]*step;
-			var middlepoint=parametricBisector(d.source.x, d.source.y, d.target.x, d.target.y)(t);
-			d.points=	[
-				getStart(d.source.x, d.source.y, d.target.x, d.target.y),
-				middlepoint,
-				getStart(d.target.x, d.target.y, d.source.x, d.source.y)
-			]
+	const step=20;
+	var line =d3.line().curve(d3.curveCardinal);
+	function computeLayout(d){
+			if(d.source == d.target){
+				var index=1+d.linkIndex;
+				var points=	[
+					[d.source.x-10,d.source.y+10],
+					[d.source.x-20-(5*index),d.source.y+20],
+					[d.source.x,d.source.y+30*index],
+					[d.source.x+20+(5*index),d.source.y+20],
+					[d.source.x+10,d.source.y+10]
+				]
 			
-			return line(d.points);
+				d.line=line(points);
+				d.textPos=[d.source.x+10,d.source.y+30*index+10];
+			}
+			else{
+				//makes  0, 1, -1, 2, -2, 3, -3...
+				var progression=d3.range(1,d.linkSetSize).reduce((p,c) => {
+					p.push(c);
+					p.push(-c);	
+					return p;  
+				}, [0])
+
+				//get symmetric positioning in case of an even number of links
+				var index=(d.linkSetSize%2==0)?d.linkIndex+1:d.linkIndex;
+								
+				var t=progression[index]*step;
+				var middlepoint=parametricBisector(d.source.x, d.source.y, d.target.x, d.target.y)(t);
+				var points=	[
+					getStart(d.source.x, d.source.y, d.target.x, d.target.y),
+					middlepoint,
+					getStart(d.target.x, d.target.y, d.source.x, d.source.y)
+				]
+			
+				d.line=line(points);
+				d.textPos=[middlepoint[0]+10,middlepoint[1]+10];
+			}		
 		}
 
 function parametricBisector(startX, startY, endX, endY){
@@ -271,7 +306,12 @@ function parametricBisector(startX, startY, endX, endY){
 	return pb;
 }
 
-
+function getStart(x1, y1, x2, y2){
+			phi = Math.atan2(y2-y1, x2-x1)
+			x = x1 + circle_radius * Math.cos(phi);
+			y = y1 + circle_radius * Math.sin(phi);
+			return [x,y];
+		}
 	return _public;
 
 });
