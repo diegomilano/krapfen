@@ -9,13 +9,17 @@ define(["d3", "model"], function(d3, model){
 	link_target=null,
 	_public={};
 
+
 	_public.init=function(){
 		svg = d3.select("svg")
 		.on("click", function(){
 			if(model.edit_locked)return;
+			model.graph.links.forEach(l=>l.selected=false);
+			model.graph.nodes.forEach(n => n.selected=false);
 			var point = d3.mouse(this);
 			var newNode=model.createNode(point[0], point[1]);
-			select(newNode);
+			newNode.selected=true;
+			model.changed();
 		});
 
 
@@ -29,7 +33,7 @@ define(["d3", "model"], function(d3, model){
   .append('svg:path')
     .attr('d', 'M0,-5L10,0L0,5')
     .attr('fill', '#000');
-
+	
 		var width = +svg.attr("width"),
 			height = +svg.attr("height")
 
@@ -54,7 +58,12 @@ define(["d3", "model"], function(d3, model){
 			.attr("id", function(d){return d.id;})
 			.on("click", function(d){
 				d3.event.stopPropagation();
-				select(d);
+				if(!d3.event.ctrlKey){
+					model.graph.links.forEach(l=>l.selected=false);
+					model.graph.nodes.forEach(n => n.selected=false);			
+				};
+				d.selected=!d.selected;
+				model.changed();
 		});
 
 
@@ -70,13 +79,13 @@ define(["d3", "model"], function(d3, model){
 
 		link_merged
 		.selectAll(".visiblelink")
+		.classed("selected", function(d){return d.selected})
 		.style("stroke", function(d){return d.type.color})
 		.style("visibility", function(d){ return d.type.visible?"visible":"collapse"})
 
 		link_merged
 		.selectAll(".clicksurface")
 		.style("visibility", function(d){ return d.type.visible?"hidden":"collapse"})
-
 
 		link_merged
 		.selectAll("text")
@@ -105,8 +114,14 @@ define(["d3", "model"], function(d3, model){
 			.on("drag", dragged)
 			.on("end", dragended))
 		.on("click", function(d){
-			d3.event.stopPropagation();
-			select(d);
+			d3.event.stopPropagation();			
+			if(!d3.event.ctrlKey){
+				model.graph.links.forEach(l => l.selected=false);
+				model.graph.nodes.forEach(n => n.selected=false);			
+			};
+			d.selected=!d.selected;
+			model.changed();
+			
 		})
 		.on("mouseenter", function(d){
 			if(drag_linking)link_target=d;
@@ -136,6 +151,7 @@ define(["d3", "model"], function(d3, model){
 
 		node_merged
 			.selectAll("circle")
+			.classed("selected",function(d){return d.selected})
 			.style("fill", function(d){ return d.type.color})
 			.style("visibility", function(d){ return d.type.visible?"visible":"collapse"});
 
@@ -144,19 +160,10 @@ define(["d3", "model"], function(d3, model){
 	}
 
 
-	function select(datum){
-		d3.selectAll(".visiblelink").classed("selected", false);
-		d3.selectAll("circle").classed("selected", false);
-		d3.select("#"+datum.id).select(".visiblelink").classed("selected", true);
-		d3.select("#"+datum.id).select("circle").classed("selected", true);
-		model.selected=datum;
-		model.changed();
-	}
-
-
 	function dragstarted(d) {
 		if(d3.event.sourceEvent.shiftKey){
 			if(model.edit_locked)return;
+			if(model.getSelected().lenght>1)return;
 			drag_linking=true;
 			dragLine
 			.classed("hidden", false)
@@ -175,29 +182,35 @@ define(["d3", "model"], function(d3, model){
 			.attr("y2", d3.event.y);
 		}
 		else{
-			d.x = d3.event.x;
-			d.y = d3.event.y;
-
-			d3.select(this).attr("transform", function(d) {
+			var toDrag=model.getSelected();
+			if(toDrag.lenght==0)toDrag=[d];			
+				
+			toDrag.forEach(n => {
+				n.x += d3.event.dx;
+				n.y += d3.event.dy;
+			});			
+							
+			d3.selectAll(".node").filter(d => d.selected==true).attr("transform", function(d) {
 				return "translate(" + d.x + "," + d.y + ")";
-			});
+			})
+			.each(function(d){
+				var movingLinks=d3.selectAll(".link")
+				.filter(function(d1){return (d1.source === d || d1.target === d)});
 
-		
-		var movingLinks=d3.selectAll(".link").filter(function(d1){return (d1.source === d || d1.target === d)});
+				movingLinks
+				.selectAll("path")
+				.attr("d",getLinkLine);
 
-		movingLinks
-		.selectAll("path")
-		.attr("d",getLinkLine);
-
-		movingLinks
-		.selectAll("text")
-		.attr('x', function(d){return getTextPos(d)[0]})
-		.attr('y', function(d){return getTextPos(d)[1]})
-		.text(function(d) {
-				return d.label;
-			});
+				movingLinks
+				.selectAll("text")
+				.attr('x', function(d){return getTextPos(d)[0]})
+				.attr('y', function(d){return getTextPos(d)[1]})
+				.text(function(d) {
+						return d.label;
+					});
+			});	
+		}	
 	}
-}
 
 
 	function dragended(d) {
@@ -207,7 +220,10 @@ define(["d3", "model"], function(d3, model){
 			dragLine.classed("hidden", true);
 			if(link_target){
 				var newlink=model.createLink(d, link_target);
-				select(newlink);
+				model.graph.links.forEach(l=>l.selected=false);
+				model.graph.nodes.forEach(n => n.selected=false);
+				newlink.selected=true;
+				model.changed();
 			}
 		}
 	}
@@ -296,10 +312,8 @@ function parametricBisector(startX, startY, endX, endY){
 			var y =centrePointY + ((yIntersect-centrePointY)/norm) * t;
 		}
 		else{
-			console.log(t);
 			var x = centrePointX ;
 			var y = centrePointY + t;
-			console.log(x,y);	
 		}
 		return [x,y];
 	}

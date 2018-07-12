@@ -7,6 +7,8 @@ Feature
 * Add a *visibility* feature to individual nodes and edges. It should be possible to simply hide nodes and then individual edges related to that node are hidden as well. Nodes hidden this way should be out of the way but not lost, there needs to be a mechanism to recover them. Perhaps a toggle that show again all nodes marked as hidden. An alternative would be to play on their transparency and make them "almost" invisible. [done]
 * Add button to lock the editor into a "view only" mode [done]
 * Add brush selection
+* Simplify the model, removing object references in favor of an id based approach. Also, separate or isolate the layout information from the model information to facilitate export/import.
+
 
 Issue
 * At import, nodes without coordinates require some kind of dynamic placement, e.g. using force layout. Add a layout button.

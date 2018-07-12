@@ -54,24 +54,27 @@
 
 				<div class="tab-content" id="myTabContent">
 					<div class="tab-pane fade show active" id="selecttab" role="tabpanel">
-						<div class="input-group mb-3">
-							<input type="text" class="form-control" placeholder="Label" id="label">
-							<button id="hide" class="btn  p-1 mx-2 my-0" type="button">
-								<img alt="hide" width="20px" src="svg/preview.svg"/>
-							</button>
-						</div>
-						<div class="input-group mb-3">
-						  <div class="input-group-prepend">
-							<label class="input-group-text" for="typeselect">Type</label>
-						  </div>
-						  <select class="custom-select" id="typeselect"></select>
-						</div>
-						<h5 class="text-left">Attributes:
-							<button type="button" class="btn p-1 ml-1 mr-0 my-0" id="addattr">
-      					<img alt="add attribute" width="20px" src="svg/plus.svg"/>
-							</button>
-						</h5>
-						<ul class="list-group" id="attrs"></ul>
+						<div id="message"></div>
+						<div id="selection_controls">
+							<div class="input-group mb-3">
+								<input type="text" class="form-control" placeholder="Label" id="label">
+								<button id="hide" class="btn  p-1 mx-2 my-0" type="button">
+									<img alt="hide" width="20px" src="svg/preview.svg"/>
+								</button>
+							</div>
+							<div class="input-group mb-3">
+								<div class="input-group-prepend">
+								<label class="input-group-text" for="typeselect">Type</label>
+								</div>
+								<select class="custom-select" id="typeselect"></select>
+							</div>
+							<h5 class="text-left">Attributes:
+								<button type="button" class="btn p-1 ml-1 mr-0 my-0" id="addattr">
+		    					<img alt="add attribute" width="20px" src="svg/plus.svg"/>
+								</button>
+							</h5>
+							<ul class="list-group" id="attrs"></ul>
+						</div>					
 					</div>
 					<div class="tab-pane fade" id="typestab" role="tabpanel">
 						<button type="button" class="btn p-1 ml-1 mr-0 my-0" id="addtype">

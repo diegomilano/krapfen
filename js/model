@@ -15,9 +15,10 @@ define(["jquery"], function($){
 			types: [_public.defaultType]
 		}
 
-		_public.selected=null;
 		_public.edit_locked=false;
-		
+		_public.getSelected=function(){
+			return _public.graph.nodes.filter(n=>n.selected).concat(_public.graph.links.filter(l=>l.selected));		
+		}
 
 	 	_public.createNode=function(x,y) {
 		    var newnode = {

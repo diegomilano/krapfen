@@ -1,7 +1,7 @@
 define(["d3", "model"], function(d3, model){
 
 	var colors=["black", "red", "blue"];
-
+	var selected;
 	var _public={};
 
 	_public.init= function(){
@@ -158,80 +158,89 @@ define(["d3", "model"], function(d3, model){
 	}
 
 
-
-
 function update_selected_view(){
-		if(!model.selected)return;
-		d3.select("#label").node().value=model.selected.label;
-		
-		d3.select("#hide").classed("active",model.selected.hidden)
+		selected=model.graph.nodes.filter(n=>n.selected).concat(model.graph.links.filter(l=>l.selected));
+		if(selected.length==0){
+			d3.select("#selection_controls").style("visibility","hidden");
+			d3.select("#message").style("visibility","visible").text("nothing selected");
+		}
+		if(selected.length>1){
+			d3.select("#selection_controls").style("visibility","hidden");
+			d3.select("#message").style("visibility","visible").text("multiple elements selected");
+		}
+		if(selected.length==1){
+			d3.select("#selection_controls").style("visibility","visible");
+			d3.select("#message").style("visibility","hidden")
 
-		//types dropdown - list of options
-		var typeselect=d3.select("#typeselect")
-		.selectAll("option")
-		.data(model.graph.types, function(d){return d.name});
+			d3.select("#label").node().value=selected[0].label;
+			d3.select("#hide").classed("active", selected[0].hidden)
 
-		typeselect.exit().remove();
+			//types dropdown - list of options
+			var typeselect=d3.select("#typeselect")
+			.selectAll("option")
+			.data(model.graph.types, function(d){return d.name});
 
-		var enter=typeselect.enter()
-		.append("option")
+			typeselect.exit().remove();
 
-		typeselect_merge=
-		typeselect.merge(enter)
-			.attr("value", function(d){return d.name})
-			.text(function(d){return d.name})
+			var enter=typeselect.enter()
+			.append("option")
 
-		if(model.selected){
-			d3.select("#typeselect")
-			.style("border-left-style", "solid")
-			.style("border-left-width", "4px")
-			.style("border-left-color", model.selected.type.color);
+			typeselect_merge=
+			typeselect.merge(enter)
+				.attr("value", function(d){return d.name})
+				.text(function(d){return d.name})
 
-			typeselect_merge
-			.property("selected", function(d){return model.selected.type===d});
+			if(model.selected){
+				d3.select("#typeselect")
+				.style("border-left-style", "solid")
+				.style("border-left-width", "4px")
+				.style("border-left-color", selected[0].type.color);
 
-		//list of attributes
-		var attrs=d3.select("#attrs")
-			.selectAll(".input-group")
-			.data(model.selected.attributes||[], function(d,i){return d+i});
+				typeselect_merge
+				.property("selected", function(d){return selected[0].type===d});
 
-			attrs
-			.exit()
-			.remove();
+			//list of attributes
+			var attrs=d3.select("#attrs")
+				.selectAll(".input-group")
+				.data(model.selected.attributes||[], function(d,i){return d+i});
 
-			enter=attrs
-				.enter()
-				.append("div")
-					.classed("input-group mb-3", true);
+				attrs
+				.exit()
+				.remove();
 
-			var input =	enter.append("input")
-					.attr("type", "text")
-					.classed("form-control", true)
-					.attr("value", function(d){return d})
-					.on("input", function(d, i){
-						model.selected.attributes.splice(i,1,this.value);
-						model.changed();
-					});
+				enter=attrs
+					.enter()
+					.append("div")
+						.classed("input-group mb-3", true);
+
+				var input =	enter.append("input")
+						.attr("type", "text")
+						.classed("form-control", true)
+						.attr("value", function(d){return d})
+						.on("input", function(d, i){
+							model.selected.attributes.splice(i,1,this.value);
+							model.changed();
+						});
 
 
-			var button = enter
-				.append("div")
-					.classed("input-group-append", true)
-				.append("button")
-					.classed("btn", true)
-				.append("img")
-				.attr("alt", "remove")
-				.attr("width","15px")
-				.attr("src", "svg/trash.svg")
+				var button = enter
+					.append("div")
+						.classed("input-group-append", true)
+					.append("button")
+						.classed("btn", true)
+					.append("img")
+					.attr("alt", "remove")
+					.attr("width","15px")
+					.attr("src", "svg/trash.svg")
 
-			//note the on must be added to the entire update or the indexes will be cached in the closure
-			update=enter.merge(attrs);
+				//note the on must be added to the entire update or the indexes will be cached in the closure
+				update=enter.merge(attrs);
 
-			update.select(".btn").on("click", function(d1,i){
-						model.selected.attributes.splice(i,1);
-						model.changed();
-					})
-
+				update.select(".btn").on("click", function(d1,i){
+							selected[0].attributes.splice(i,1);
+							model.changed();
+						})
+			}
 		}
 
 	}
