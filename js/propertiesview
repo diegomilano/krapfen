@@ -122,36 +122,31 @@ define(["d3", "model"], function(d3, model){
 		//Label field
 		d3.select("#label").on("input",
 		function(){
-			if(model.selected){
-				model.selected.label=this.value;
+				model.getSelected()[0].label=this.value;
 				model.changed();
-			}
 		});
 
 		//type selection dropdown
 		d3.select("#hide").on("click",
 		function(){
-			if(model.selected){
-				model.selected.hidden=!model.selected.hidden;
+				var selectedNode=model.getSelected()[0];
+				selectedNode.hidden=!selectedNode.hidden;
 				model.changed();
-			}
 		});
 
 
 		//type selection dropdown
 		d3.select("#typeselect").on("input",
 		function(){
-			if(model.selected){
-				model.selected.type=model.graph.types.filter(x => this.value==x.name)[0];
+				model.getSelected()[0].type=model.graph.types.filter(x => this.value==x.name)[0];
 				model.changed();
-			}
 		});
 
 		//add attribute button
 		d3.select("#addattr").on("click",
 		function(){
 			if(model.selected){
-				model.selected.attributes.push("NEW");
+				model.getSelected()[0].attributes.push("NEW");
 				model.changed();
 			}
 		});
@@ -159,7 +154,7 @@ define(["d3", "model"], function(d3, model){
 
 
 function update_selected_view(){
-		selected=model.graph.nodes.filter(n=>n.selected).concat(model.graph.links.filter(l=>l.selected));
+		var selected=model.getSelected();
 		if(selected.length==0){
 			d3.select("#selection_controls").style("visibility","hidden");
 			d3.select("#message").style("visibility","visible").text("nothing selected");
@@ -190,7 +185,7 @@ function update_selected_view(){
 				.attr("value", function(d){return d.name})
 				.text(function(d){return d.name})
 
-			if(model.selected){
+	
 				d3.select("#typeselect")
 				.style("border-left-style", "solid")
 				.style("border-left-width", "4px")
@@ -202,7 +197,7 @@ function update_selected_view(){
 			//list of attributes
 			var attrs=d3.select("#attrs")
 				.selectAll(".input-group")
-				.data(model.selected.attributes||[], function(d,i){return d+i});
+				.data(selected[0].attributes||[], function(d,i){return d+i});
 
 				attrs
 				.exit()
@@ -218,7 +213,7 @@ function update_selected_view(){
 						.classed("form-control", true)
 						.attr("value", function(d){return d})
 						.on("input", function(d, i){
-							model.selected.attributes.splice(i,1,this.value);
+							selected[0].attributes.splice(i,1,this.value);
 							model.changed();
 						});
 
@@ -240,7 +235,7 @@ function update_selected_view(){
 							selected[0].attributes.splice(i,1);
 							model.changed();
 						})
-			}
+			
 		}
 
 	}
