@@ -1,5 +1,8 @@
 define(["d3", "model"], function(d3, model){
 
+    function multiline(str, x, y){
+        return str.split("//").map((s,i) => `<tspan x="${x}" ${(i==0)?("y="+y):""} dy="1.2em">${s}</tspan>`).join("");
+    }
 
 	var circle_radius=13;
 
@@ -89,10 +92,8 @@ define(["d3", "model"], function(d3, model){
 
 		link_merged
 		.selectAll("text")
-			.attr('x', function(d){return getTextPos(d)[0]})
-			.attr('y', function(d){return getTextPos(d)[1]})
-			.text(function(d) {
-				return d.label;
+			.html(function(d) {
+				return multiline(d.label, getTextPos(d)[0], getTextPos(d)[1]);
 			})
 		.style("visibility", function(d){ return d.type.visible?"visible":"collapse"});
 
@@ -144,8 +145,8 @@ define(["d3", "model"], function(d3, model){
 				return "translate(" + d.x + "," + d.y + ")";
 			})
 		.selectAll("text")
-			.text(function(d) {
-				return d.label;
+			.html(function(d) {
+				return multiline(d.label,10,6);
 			})
 			.style("visibility", function(d){ return d.type.visible?"visible":"collapse"});
 
@@ -203,10 +204,8 @@ define(["d3", "model"], function(d3, model){
 
 				movingLinks
 				.selectAll("text")
-				.attr('x', function(d){return getTextPos(d)[0]})
-				.attr('y', function(d){return getTextPos(d)[1]})
-				.text(function(d) {
-						return d.label;
+				.html(function(d) {
+						return multiline(d.label,getTextPos(d)[0],getTextPos(d)[1]);
 					});
 			});	
 		}	
